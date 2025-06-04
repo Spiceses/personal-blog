@@ -114,8 +114,99 @@ my-react-ts-app/
 
 ###### friends
 
+
+
 ##### api
 
-###### /api/posts
+###### get /api/posts
 
-###### /api/posts/:slug
+成功响应 200 OK
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "mongooseObjectId1",
+      "title": "文章标题1",
+      "slug": "wen-zhang-biao-ti-1",
+      "createdAt": "datetime",
+      "updatedAt": "datetime"
+    },
+    {
+      "_id": "mongooseObjectId2",
+      "title": "文章标题2",
+      "slug": "wen-zhang-biao-ti-2",
+      "createdAt": "datetime",
+      "updatedAt": "datetime"
+    }
+  ]
+}
+```
+
+错误响应
+
+* 500 Internal Server Error
+
+
+
+###### get /api/posts/:slug
+
+成功响应 200 OK
+
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "mongooseObjectId",
+    "title": "文章标题",
+    "slug": "wen-zhang-biao-ti",
+    "markdownContent": "这是文章的完整 Markdown 内容...",
+    "createdAt": "datetime",
+    "updatedAt": "datetime"
+  }
+}
+```
+
+错误响应
+
+* `404 Not Found`: 如果具有给定 `id` 或 `slug` 的文章不存在。
+* 500 Internal Server Error
+
+
+
+###### post /api/posts
+
+Request Body
+
+```json
+{
+  "title": "你的文章标题",
+  "markdownContent": "你的文章 Markdown 内容"
+}
+```
+
+成功响应
+
+状态码: `201 Created`
+
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "generatedObjectId",
+    "title": "你的文章标题",
+    "slug": "ni-de-wen-zhang-biao-ti",
+    "markdownContent": "你的文章 Markdown 内容",
+    "createdAt": "timestamp",
+    "updatedAt": "timestamp"
+  }
+}
+```
+
+错误响应
+
+状态码: 
+
+* 400 Bad Request 如果请求数据不符合要求（例如，`title` 或 `markdownContent` 缺失）。
+* 500 Internal Server Error

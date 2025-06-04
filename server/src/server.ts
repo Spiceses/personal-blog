@@ -2,6 +2,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import Post from "../models/post.js";
 
 // 加载 .env 文件中的环境变量
 dotenv.config();
@@ -36,6 +37,10 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/posts", (req, res) => {});
+
+app.get("/api/posts/:slug", (req, res) => {});
+
+app.post("/api/posts", (req, res) => {});
 
 // 先连接数据库，成功后再启动服务器
 const startServer = async () => {

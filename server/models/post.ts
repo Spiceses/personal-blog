@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
-import slugify from "slugify";
+
+const slugify = require("slugify");
 
 export interface IPost extends Document {
   title: string;
