@@ -35,6 +35,8 @@ app.get("/", (req, res) => {
   res.send("你好，服务器正在运行!");
 });
 
+app.get("/api/posts", (req, res) => {});
+
 // 先连接数据库，成功后再启动服务器
 const startServer = async () => {
   await connectDB(); // 等待数据库连接成功
