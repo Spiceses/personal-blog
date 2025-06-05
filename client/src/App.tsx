@@ -1,4 +1,6 @@
-const App = () => {
+import { JSX } from "react";
+
+const App = (): JSX.Element => {
   return <h1>Hello from React and TypeScript!</h1>;
 };
 

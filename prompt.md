@@ -148,6 +148,17 @@ my-react-ts-app/
 
 * 500 Internal Server Error
 
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INTERNAL_SERVER_ERROR",
+    "message": "服务器发生了一个意外错误。",
+    "timestamp": "2025-06-04T15:20:13Z"
+  }
+}
+```
+
 
 
 ###### get /api/posts/:slug
@@ -171,7 +182,30 @@ my-react-ts-app/
 错误响应
 
 * `404 Not Found`: 如果具有给定 `id` 或 `slug` 的文章不存在。
+
+  ```json
+  {
+    "success": false,
+    "error": {
+      "code": "NOT_FOUND",
+      "message": "文章未找到。",
+      "timestamp": "2025-06-04T08:22:12Z"
+    }
+  }
+  ```
+
 * 500 Internal Server Error
+
+  ```json
+  {
+    "success": false,
+    "error": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "message": "服务器发生了一个意外错误。",
+      "timestamp": "2025-06-04T15:20:13Z"
+    }
+  }
+  ```
 
 
 
