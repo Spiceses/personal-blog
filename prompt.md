@@ -92,6 +92,32 @@ my-react-ts-app/
 └── webpack.config.js       # Webpack 配置文件 (如果未拆分到 webpack/ 目录)
 ```
 
+#### 
+
+##### design
+
+###### Empathize
+
+* 不知道怎么展示自己
+  * 性格
+  * 爱好
+  * 理想
+* 背景选什么
+  * 颜色
+  * 图案
+  * 贴纸
+* 组件如何设计
+
+###### Define
+
+亲和图
+
+###### Ideate
+
+###### Prototype
+
+###### Test
+
 ##### 页面
 
 ###### home
@@ -100,11 +126,15 @@ my-react-ts-app/
 
 * 自我介绍
   
-  狼与香辛料
+  狼与香辛料, 绘制香辛料的小故事介绍自己的名字
   
   * 性格
+    * 冷淡而真诚
   * 爱好
+    * 游泳
+    * 音乐
   * 志向
+    * 拯救世界
 
 ###### about me
 
@@ -116,7 +146,7 @@ my-react-ts-app/
 
 
 
-##### api
+#### api
 
 ###### get /api/posts
 

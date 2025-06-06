@@ -14,6 +14,14 @@ export default {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist"),
   },
+  devServer: {
+    static: {
+      directory: path.join(__dirname, "dist"),
+    },
+    compress: true,
+    port: 3000, // 前端服务器端口
+    historyApiFallback: true, // 解决单页面应用路由问题
+  },
   module: {
     rules: [
       {
