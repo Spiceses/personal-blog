@@ -1,6 +1,8 @@
 import { Routes, Route } from "react-router-dom";
+
 import BlogPage from "./pages/BlogPage.tsx";
 import HomePage from "./pages/HomePage.tsx";
+import NotFoundPage from "./pages/NotFoundPage.tsx";
 import Navbar from "./components/Navbar/Navbar.tsx";
 
 const App = () => {
@@ -11,7 +13,7 @@ const App = () => {
         <Route path="/" element={<HomePage />} />
         {/* <Route path="/about" element={<AboutPage />} /> */}
         <Route path="/blog" element={<BlogPage />} />
-        {/* <Route path="*" element={<NotFoundPage />} /> */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
   );
