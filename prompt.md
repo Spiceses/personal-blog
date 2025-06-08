@@ -114,6 +114,8 @@ my-react-ts-app/
 
 ###### Ideate
 
+* profile组件, 展示自己的性格, 爱好, 理想
+
 ###### Prototype
 
 ###### Test
