@@ -33,11 +33,16 @@ export default {
         test: /\.css$/i,
         use: ["style-loader", "css-loader"],
       },
+      {
+        test: /\.(png|jpe?g|gif|svg|ico)$/i, // 匹配图片文件格式
+        type: "asset/resource", // 使用 asset/resource 类型
+      },
     ],
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: "./public/index.html",
+      favicon: "./public/favicon.ico",
     }),
     new ESLintPlugin({
       extensions: ["js", "jsx", "ts", "tsx"],
