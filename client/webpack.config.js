@@ -14,13 +14,31 @@ export default {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist"),
   },
+  resolve: {
+    extensions: [".ts", ".tsx", ".js", ".jsx"], // 确保 Webpack 能解析这些扩展名
+    alias: {
+      "@api": path.resolve(__dirname, "src/api"),
+    },
+  },
+  devtool: "eval-source-map",
   devServer: {
+    devMiddleware: {
+      index: false, // specify to enable root proxying
+    },
     static: {
       directory: path.join(__dirname, "dist"),
     },
     compress: true,
     port: 3000, // 前端服务器端口
     historyApiFallback: true, // 解决单页面应用路由问题
+    proxy: [
+      {
+        context: ["/api"],
+        target: "http://localhost:5000",
+        secure: false,
+        changeOrigin: true,
+      },
+    ],
   },
   module: {
     rules: [

@@ -1,5 +1,5 @@
 import { useState, useEffect, JSX } from "react";
-import { getPosts, PostListItem } from "../../api/posts.ts";
+import { getPosts, PostListItem } from "@api/posts.ts";
 import { Grid, Card, CardContent, Typography } from "@mui/material";
 
 const Blog = (): JSX.Element => {

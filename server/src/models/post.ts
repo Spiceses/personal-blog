@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-const slugify = require("slugify");
+import slugify from "slugify";
 
 export interface IPost extends Document {
   title: string;
@@ -25,14 +25,9 @@ const PostSchema = new Schema(
       lowercase: true,
       trim: true,
     },
-    markdownContent: {
-      type: String,
-      required: [true, "post内容不能为空"],
-    },
+    markdownContent: { type: String, required: [true, "post内容不能为空"] },
   },
-  {
-    timestamps: true, // 在这里启用时间戳
-  }
+  { timestamps: true }
 );
 
 PostSchema.pre<IPost>("save", function (next) {

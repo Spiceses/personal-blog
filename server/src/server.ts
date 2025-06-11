@@ -2,7 +2,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import Post from "../models/post.js";
+import Post from "./models/post.js";
 
 // 加载 .env 文件中的环境变量
 dotenv.config();
@@ -33,12 +33,30 @@ const connectDB = async () => {
 app.use(express.json()); // 用于解析 JSON 请求体
 
 app.get("/", (req, res) => {
+  console.log("调用/");
   res.send("你好，服务器正在运行!");
 });
 
-app.get("/api/posts", (req, res) => {});
+app.get("/api/posts", async (req, res) => {
+  console.log("调用api/posts");
+  const data = await Post.find({}, "title slug createdAt updatedAt");
+  res.json({
+    success: true,
+    data: data,
+  });
+});
 
-app.get("/api/posts/:slug", (req, res) => {});
+app.get("/api/posts/:slug", async (req, res) => {
+  console.log("调用api/posts/:slug");
+  const data = await Post.find(
+    {},
+    "title slug markdownContent createdAt updatedAt"
+  );
+  res.json({
+    success: true,
+    data: data,
+  });
+});
 
 app.post("/api/posts", (req, res) => {});
 

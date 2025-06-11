@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node ./dist/server.js",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'node --loader ts-node/esm ./src/server.ts'"
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'tsx ./src/server.ts'"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +24,7 @@
     "@types/mongoose": "^5.11.96",
     "@types/node": "^22.15.29",
     "ts-node": "^10.9.2",
+    "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   }
 }
