@@ -38,7 +38,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/posts", async (req, res) => {
-  console.log("调用 api/posts");
+  console.log("调用 get api/posts");
   const data = await Post.find({}, "title slug createdAt updatedAt");
   res.json({
     success: true,
@@ -59,7 +59,7 @@ app.get("/api/posts/:slug", async (req, res) => {
 });
 
 app.post("/api/posts", async (req, res) => {
-  console.log("调用 post api/posts/");
+  console.log("调用 post api/posts");
 
   const post = new Post({
     title: req.body.title,

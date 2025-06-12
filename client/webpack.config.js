@@ -2,6 +2,7 @@ import path from "path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import ESLintPlugin from "eslint-webpack-plugin";
 import { fileURLToPath } from "url"; // 需要这个来获取 __dirname 的等效功能
+import webpack from "webpack";
 
 // 在 ESM 中，__filename 和 __dirname 不是直接可用的
 const __filename = fileURLToPath(import.meta.url);
@@ -18,6 +19,9 @@ export default {
     extensions: [".ts", ".tsx", ".js", ".jsx"], // 确保 Webpack 能解析这些扩展名
     alias: {
       "@api": path.resolve(__dirname, "src/api"),
+    },
+    fallback: {
+      buffer: path.resolve(__dirname, "node_modules/buffer/index.js"),
     },
   },
   devtool: "eval-source-map",
@@ -64,6 +68,9 @@ export default {
     }),
     new ESLintPlugin({
       extensions: ["js", "jsx", "ts", "tsx"],
+    }),
+    new webpack.ProvidePlugin({
+      Buffer: ["buffer", "Buffer"],
     }),
   ],
 };

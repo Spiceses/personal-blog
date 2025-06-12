@@ -24,6 +24,10 @@ interface ApiGetPostSuccessResponse extends ApiSuccessBaseResponse {
   data: Post;
 }
 
+interface ApiCreatePostSuccessResponse extends ApiSuccessBaseResponse {
+  data: Post;
+}
+
 const apiClient: AxiosInstance = axios.create({
   baseURL: "/api",
   headers: {
@@ -49,4 +53,16 @@ const getPost = async (slug: string): Promise<Post> => {
   return post;
 };
 
-export { getPosts, getPost, PostListItem, Post };
+const createPost = async (
+  title: string,
+  markdownContent: string
+): Promise<Post> => {
+  const postData = { title, markdownContent };
+
+  const response: AxiosResponse<ApiCreatePostSuccessResponse> =
+    await apiClient.post("/posts", postData); // 使用 apiClient.post 发送 POST 请求
+
+  return response.data.data;
+};
+
+export { getPosts, getPost, createPost, PostListItem, Post };
