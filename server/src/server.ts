@@ -38,7 +38,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/posts", async (req, res) => {
-  console.log("调用api/posts");
+  console.log("调用 api/posts");
   const data = await Post.find({}, "title slug createdAt updatedAt");
   res.json({
     success: true,
@@ -47,9 +47,9 @@ app.get("/api/posts", async (req, res) => {
 });
 
 app.get("/api/posts/:slug", async (req, res) => {
-  console.log("调用api/posts/:slug");
+  console.log("调用 get api/posts/:slug");
   const data = await Post.find(
-    {},
+    { slug: req.params.slug },
     "title slug markdownContent createdAt updatedAt"
   );
   res.json({
@@ -58,7 +58,21 @@ app.get("/api/posts/:slug", async (req, res) => {
   });
 });
 
-app.post("/api/posts", (req, res) => {});
+app.post("/api/posts", async (req, res) => {
+  console.log("调用 post api/posts/");
+
+  const post = new Post({
+    title: req.body.title,
+    markdownContent: req.body.markdownContent,
+  });
+
+  const savedPost = await post.save();
+
+  res.status(201).json({
+    success: true,
+    data: savedPost,
+  });
+});
 
 // 先连接数据库，成功后再启动服务器
 const startServer = async () => {
