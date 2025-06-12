@@ -1,5 +1,6 @@
 import { Typography } from "@mui/material";
 import Blog from "../components/Blog/Blog.tsx";
+import BlogUploader from "../components/BlogUploader/BlogUploader.tsx";
 
 const BlogPage = () => {
   return (
@@ -14,6 +15,7 @@ const BlogPage = () => {
       >
         博客
       </Typography>
+      <BlogUploader />
       <Blog />
     </>
   );
