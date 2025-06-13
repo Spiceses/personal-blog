@@ -1,14 +1,12 @@
-// server.ts
-import express from "express";
+// src/server.ts
+
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import Post from "./models/post.js";
+import app from "./app.js";
 
 // 加载 .env 文件中的环境变量
 dotenv.config();
-
-const app = express();
-const PORT = process.env.PORT || 5000; // 从环境变量获取端口，或默认为3000
+const PORT = process.env.PORT || 5000; // 从环境变量获取端口，或默认为5000
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
@@ -29,51 +27,6 @@ const connectDB = async () => {
   }
 };
 
-// Express 中间件和其他路由可以放在这里
-app.use(express.json()); // 用于解析 JSON 请求体
-
-app.get("/", (req, res) => {
-  console.log("调用/");
-  res.send("你好，服务器正在运行!");
-});
-
-app.get("/api/posts", async (req, res) => {
-  console.log("调用 get api/posts");
-  const data = await Post.find({}, "title slug createdAt updatedAt");
-  res.json({
-    success: true,
-    data: data,
-  });
-});
-
-app.get("/api/posts/:slug", async (req, res) => {
-  console.log("调用 get api/posts/:slug");
-  const data = await Post.find(
-    { slug: req.params.slug },
-    "title slug markdownContent createdAt updatedAt"
-  );
-  res.json({
-    success: true,
-    data: data,
-  });
-});
-
-app.post("/api/posts", async (req, res) => {
-  console.log("调用 post api/posts");
-
-  const post = new Post({
-    title: req.body.title,
-    markdownContent: req.body.markdownContent,
-  });
-
-  const savedPost = await post.save();
-
-  res.status(201).json({
-    success: true,
-    data: savedPost,
-  });
-});
-
 // 先连接数据库，成功后再启动服务器
 const startServer = async () => {
   await connectDB(); // 等待数据库连接成功
@@ -85,23 +38,3 @@ const startServer = async () => {
 
 // 启动服务器
 startServer();
-
-// 监听 Mongoose 连接事件 (可选)
-mongoose.connection.on("connected", () => {
-  console.log("Mongoose 已连接到数据库");
-});
-
-mongoose.connection.on("error", (err) => {
-  console.error("Mongoose 连接错误:", err.message);
-});
-
-mongoose.connection.on("disconnected", () => {
-  console.log("Mongoose 连接已断开");
-});
-
-// (可选) 优雅地关闭 MongoDB 连接
-process.on("SIGINT", async () => {
-  await mongoose.connection.close();
-  console.log("MongoDB 连接因应用终止而关闭");
-  process.exit(0);
-});

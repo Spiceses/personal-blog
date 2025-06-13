@@ -20,7 +20,6 @@ const PostSchema = new Schema(
     },
     slug: {
       type: String,
-      required: [true, "slug不能为空"],
       unique: true,
       lowercase: true,
       trim: true,
@@ -32,7 +31,7 @@ const PostSchema = new Schema(
 
 PostSchema.pre<IPost>("save", function (next) {
   if ((this.isModified("title") || this.isNew) && this.title) {
-    this.slug = slugify(this.title, {
+    this.slug = slugify.default(this.title, {
       lower: true,
       strict: true,
       replacement: "-",

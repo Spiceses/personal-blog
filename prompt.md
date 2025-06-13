@@ -92,8 +92,6 @@ my-react-ts-app/
 └── webpack.config.js       # Webpack 配置文件 (如果未拆分到 webpack/ 目录)
 ```
 
-#### 
-
 ##### design
 
 ###### Empathize
