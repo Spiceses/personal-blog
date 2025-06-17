@@ -13,6 +13,8 @@
     "baseUrl": "./src", // <--- 关键：设置 baseUrl 为你的源代码根目录
     "paths": { // <--- 关键：定义路径别名
       "@api/*": ["api/*"], // 将 @api/xxx 映射到 src/api/xxx
+      "@pages/*": ["pages/*"], // 将 @api/xxx 映射到 src/api/xxx
+      "@components/*": ["components/*"], // 将 @api/xxx 映射到 src/api/xxx
     }
   }
 }

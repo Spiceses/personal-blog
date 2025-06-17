@@ -19,6 +19,8 @@ export default {
     extensions: [".ts", ".tsx", ".js", ".jsx"], // 确保 Webpack 能解析这些扩展名
     alias: {
       "@api": path.resolve(__dirname, "src/api"),
+      "@components": path.resolve(__dirname, "src/components"),
+      "@pages": path.resolve(__dirname, "src/pages"),
     },
     fallback: {
       buffer: path.resolve(__dirname, "node_modules/buffer/index.js"),
