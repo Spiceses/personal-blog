@@ -182,9 +182,7 @@ my-react-ts-app/
 {
   "success": false,
   "error": {
-    "code": "INTERNAL_SERVER_ERROR",
     "message": "服务器发生了一个意外错误。",
-    "timestamp": "2025-06-04T15:20:13Z"
   }
 }
 ```
@@ -217,29 +215,25 @@ my-react-ts-app/
   {
     "success": false,
     "error": {
-      "code": "NOT_FOUND",
       "message": "文章未找到。",
-      "timestamp": "2025-06-04T08:22:12Z"
     }
   }
   ```
-
+  
 * 500 Internal Server Error
 
   ```json
   {
     "success": false,
     "error": {
-      "code": "INTERNAL_SERVER_ERROR",
       "message": "服务器发生了一个意外错误。",
-      "timestamp": "2025-06-04T15:20:13Z"
     }
   }
   ```
 
 
 
-###### post /api/posts
+###### post /api/posts(/md)
 
 Request Body
 
@@ -273,4 +267,50 @@ Request Body
 状态码: 
 
 * 400 Bad Request 如果请求数据不符合要求（例如，`title` 或 `markdownContent` 缺失）。
+
+  ```json
+  {
+    "success": false,
+    "error": {
+      "message": "请求数据不符合要求。",
+    }
+  }
+  ```
+
 * 500 Internal Server Error
+
+  ```json
+  {
+    "success": false,
+    "error": {
+      "message": "服务器发生了一个意外错误。",
+    }
+  }
+  ```
+
+  
+
+###### post /api/posts/zip
+
+请求体
+
+zip文件
+
+成功响应
+
+状态码: `201 Created`
+
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "generatedObjectId",
+    "title": "你的文章标题",
+    "slug": "ni-de-wen-zhang-biao-ti",
+    "markdownContent": "你的文章 Markdown 内容",
+    "createdAt": "timestamp",
+    "updatedAt": "timestamp"
+  }
+}
+```
+
