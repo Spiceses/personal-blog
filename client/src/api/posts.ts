@@ -65,4 +65,27 @@ const createPost = async (
   return response.data.data;
 };
 
-export { getPosts, getPost, createPost, PostListItem, Post };
+const createPostWithImages = async (file: File) => {
+  const formData = new FormData();
+  formData.append("blogPackage", file);
+
+  const response: AxiosResponse<ApiCreatePostSuccessResponse> =
+    await apiClient.post("/posts/zip", formData, {
+      headers: {
+        // 浏览器会自动设置正确的 multipart/form-data 类型和 boundary
+        // 但为了明确，我们在这里可以覆盖默认的 'application/json'
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+  return response.data.data;
+};
+
+export {
+  getPosts,
+  getPost,
+  createPost,
+  createPostWithImages,
+  PostListItem,
+  Post,
+};
