@@ -1,6 +1,7 @@
 // src/app.ts
 
 import express from "express";
+import dotenv from "dotenv";
 import Post from "./models/post.js";
 import multer from "multer";
 import OSS from "ali-oss";
@@ -17,6 +18,7 @@ app.use(express.json()); // 用于解析 JSON 请求体
 
 const upload = multer({ storage: multer.memoryStorage() });
 
+dotenv.config();
 const ossClient = new OSS({
   region: process.env.OSS_REGION!,
   accessKeyId: process.env.OSS_ACCESS_KEY_ID!,
@@ -32,51 +34,88 @@ app.get("/", (req, res) => {
 
 app.get("/api/posts", async (req, res) => {
   console.log("调用 get api/posts");
-  const data = await Post.find({}, "title slug createdAt updatedAt");
-  res.json({
-    success: true,
-    data: data,
-  });
+  try {
+    const data = await Post.find({}, "title slug createdAt updatedAt");
+    res.json({
+      success: true,
+      data: data,
+    });
+  } catch (error) {
+    console.error("获取文章列表失败:", error);
+    res.status(500).json({
+      success: false,
+      error: {
+        message: "服务器发生了一个意外错误。",
+      },
+    });
+  }
 });
 
 app.get("/api/posts/:slug", async (req, res) => {
   console.log(`调用 get api/posts/${req.params.slug}`);
+  try {
+    const data = await Post.findOne({ slug: req.params.slug }, "title slug markdownContent createdAt updatedAt");
 
-  const data = await Post.findOne(
-    { slug: req.params.slug },
-    "title slug markdownContent createdAt updatedAt"
-  );
+    if (!data) {
+      res.status(404).json({
+        success: false,
+        error: {
+          message: "文章未找到。",
+        },
+      });
+      return;
+    }
 
-  if (!data) {
-    const error = {
-      code: "NOT_FOUND",
-      message: "文章未找到。",
-      timestamp: new Date().getTime(),
-    };
-    res.status(404).json({ success: false, error: error });
-    return;
+    res.json({
+      success: true,
+      data: data,
+    });
+  } catch (error) {
+    console.error(`获取文章 ${req.params.slug} 失败:`, error);
+    res.status(500).json({
+      success: false,
+      error: {
+        message: "服务器发生了一个意外错误。",
+      },
+    });
   }
-
-  res.json({
-    success: true,
-    data: data,
-  });
 });
 
 app.post("/api/posts", async (req, res) => {
   console.log("调用 post api/posts");
+  try {
+    const { title, markdownContent } = req.body;
 
-  const post = new Post({
-    title: req.body.title,
-    markdownContent: req.body.markdownContent,
-  });
+    if (!title || !markdownContent) {
+      res.status(400).json({
+        success: false,
+        error: {
+          message: "请求数据不符合要求（标题或内容缺失）。",
+        },
+      });
+      return;
+    }
 
-  const savedPost = await post.save();
+    const post = new Post({
+      title: title,
+      markdownContent: markdownContent,
+    });
 
-  res.status(201).json({
-    success: true,
-    data: savedPost,
-  });
+    const savedPost = await post.save();
+
+    res.status(201).json({
+      success: true,
+      data: savedPost,
+    });
+  } catch (error) {
+    console.error("创建文章失败:", error);
+    res.status(500).json({
+      success: false,
+      error: {
+        message: "服务器发生了一个意外错误。",
+      },
+    });
+  }
 });
 
 app.post("/api/posts/zip", upload.single("blogPackage"), async (req, res) => {
@@ -93,11 +132,7 @@ app.post("/api/posts/zip", upload.single("blogPackage"), async (req, res) => {
     const imagePathMap = new Map<string, string>();
 
     const uploadPromises = zipEntries
-      .filter(
-        (entry) =>
-          /\.(jpg|jpeg|png|gif|svg)$/i.test(entry.entryName) &&
-          !entry.isDirectory
-      )
+      .filter((entry) => /\.(jpg|jpeg|png|gif|svg)$/i.test(entry.entryName) && !entry.isDirectory)
       .map(async (entry) => {
         const fileExt = path.extname(entry.entryName);
         const uniqueFileName = `${uuidv4()}${fileExt}`;
@@ -111,17 +146,19 @@ app.post("/api/posts/zip", upload.single("blogPackage"), async (req, res) => {
     await Promise.all(uploadPromises);
 
     // 找到 .md 文件并处理内容
-    const markdownEntry = zipEntries.find(
-      (entry) => entry.entryName.endsWith(".md") && !entry.isDirectory
-    );
-    if (!markdownEntry) {
-      throw new Error("No .md file found in the zip package.");
+    const markdownFiles = zipEntries.filter((e) => e.entryName.endsWith(".md") && !e.isDirectory);
+    if (markdownFiles.length !== 1) {
+      res.status(400).json({
+        success: false,
+        error: { message: `Expected 1 markdown file in the zip, but found ${markdownFiles.length}.` },
+      });
+      return;
     }
+    const markdownEntry = markdownFiles[0];
     const rawMarkdownContent = markdownEntry.getData().toString("utf8");
 
     // 使用 gray-matter 解析元数据
-    const { data: metadata, content: markdownBody } =
-      matter(rawMarkdownContent);
+    const { data: metadata, content: markdownBody } = matter(rawMarkdownContent);
 
     // 替换 Markdown 内容中的本地图片路径为 OSS URL
     let finalContent = markdownBody;
@@ -143,11 +180,22 @@ app.post("/api/posts/zip", upload.single("blogPackage"), async (req, res) => {
       data: savedPost,
     });
   } catch (error) {
-    console.error("Error processing zip file:", error);
-    const errorMessage =
-      error instanceof Error ? error.message : "An unknown error occurred";
-    res.status(500).json({ success: false, message: errorMessage });
+    console.error("处理 ZIP 文件失败:", error);
+    res.status(500).json({ success: false, error: { message: "处理上传的 ZIP 文件时发生错误。" } });
   }
+});
+
+// 统一错误处理中间件
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error("全局错误捕获:", err); // 记录详细错误信息
+  res.status(err.status || 500).json({
+    success: false,
+    error: {
+      message: err.message || "服务器发生了一个意外错误。",
+      // 在开发环境中可以包含堆栈信息，生产环境应避免
+      ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
+    },
+  });
 });
 
 // 导出 app 实例，以便在 server.ts 和测试文件中使用

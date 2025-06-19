@@ -314,3 +314,30 @@ zip文件
 }
 ```
 
+错误响应
+
+状态码: 
+
+* 400 Bad Request 如果请求数据不符合要求（例如，压缩包不包含md文件或者存在多个md文件 ）。
+
+  ```json
+  {
+    "success": false,
+    "error": {
+      "message": "压缩包未包含.md文件。",
+    }
+  }
+  ```
+
+* 500 Internal Server Error
+
+  ```json
+  {
+    "success": false,
+    "error": {
+      "message": `Expected 1 markdown file in the zip, but found ${markdownFiles.length}.`,
+    }
+  }
+  ```
+
+  
