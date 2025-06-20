@@ -96,15 +96,15 @@ my-react-ts-app/
 
 ###### Empathize
 
-* 不知道怎么展示自己
-  * 性格
-  * 爱好
-  * 理想
-* 背景选什么
-  * 颜色
-  * 图案
-  * 贴纸
-* 组件如何设计
+- 不知道怎么展示自己
+  - 性格
+  - 爱好
+  - 理想
+- 背景选什么
+  - 颜色
+  - 图案
+  - 贴纸
+- 组件如何设计
 
 ###### Define
 
@@ -112,7 +112,7 @@ my-react-ts-app/
 
 ###### Ideate
 
-* profile组件, 展示自己的性格, 爱好, 理想
+- profile 组件, 展示自己的性格, 爱好, 理想
 
 ###### Prototype
 
@@ -122,19 +122,19 @@ my-react-ts-app/
 
 ###### home
 
-* 导航栏
+- 导航栏
 
-* 自我介绍
-  
+- 自我介绍
+
   狼与香辛料, 绘制香辛料的小故事介绍自己的名字
-  
-  * 性格
-    * 冷淡而真诚
-  * 爱好
-    * 游泳
-    * 音乐
-  * 志向
-    * 拯救世界
+
+  - 性格
+    - 冷淡而真诚
+  - 爱好
+    - 游泳
+    - 音乐
+  - 志向
+    - 拯救世界
 
 ###### about me
 
@@ -143,8 +143,6 @@ my-react-ts-app/
 ###### love story
 
 ###### friends
-
-
 
 #### api
 
@@ -176,18 +174,16 @@ my-react-ts-app/
 
 错误响应
 
-* 500 Internal Server Error
+- 500 Internal Server Error
 
 ```json
 {
   "success": false,
   "error": {
-    "message": "服务器发生了一个意外错误。",
+    "message": "服务器发生了一个意外错误。"
   }
 }
 ```
-
-
 
 ###### get /api/posts/:slug
 
@@ -209,29 +205,27 @@ my-react-ts-app/
 
 错误响应
 
-* `404 Not Found`: 如果具有给定 `id` 或 `slug` 的文章不存在。
+- `404 Not Found`: 如果具有给定 `id` 或 `slug` 的文章不存在。
 
   ```json
   {
     "success": false,
     "error": {
-      "message": "文章未找到。",
+      "message": "文章未找到。"
     }
   }
   ```
-  
-* 500 Internal Server Error
+
+- 500 Internal Server Error
 
   ```json
   {
     "success": false,
     "error": {
-      "message": "服务器发生了一个意外错误。",
+      "message": "服务器发生了一个意外错误。"
     }
   }
   ```
-
-
 
 ###### post /api/posts(/md)
 
@@ -264,37 +258,35 @@ Request Body
 
 错误响应
 
-状态码: 
+状态码:
 
-* 400 Bad Request 如果请求数据不符合要求（例如，`title` 或 `markdownContent` 缺失）。
-
-  ```json
-  {
-    "success": false,
-    "error": {
-      "message": "请求数据不符合要求。",
-    }
-  }
-  ```
-
-* 500 Internal Server Error
+- 400 Bad Request 如果请求数据不符合要求（例如，`title` 或 `markdownContent` 缺失）。
 
   ```json
   {
     "success": false,
     "error": {
-      "message": "服务器发生了一个意外错误。",
+      "message": "请求数据不符合要求。"
     }
   }
   ```
 
-  
+- 500 Internal Server Error
+
+  ```json
+  {
+    "success": false,
+    "error": {
+      "message": "服务器发生了一个意外错误。"
+    }
+  }
+  ```
 
 ###### post /api/posts/zip
 
 请求体
 
-zip文件
+zip 文件
 
 成功响应
 
@@ -316,20 +308,20 @@ zip文件
 
 错误响应
 
-状态码: 
+状态码:
 
-* 400 Bad Request 如果请求数据不符合要求（例如，压缩包不包含md文件或者存在多个md文件 ）。
+- 400 Bad Request 如果请求数据不符合要求（例如，压缩包不包含 md 文件或者存在多个 md 文件, 或者md文件不包含yaml头 ）。
 
   ```json
   {
     "success": false,
     "error": {
-      "message": "压缩包未包含.md文件。",
+      "message": "压缩包未包含.md文件。"
     }
   }
   ```
 
-* 500 Internal Server Error
+- 500 Internal Server Error
 
   ```json
   {
@@ -339,5 +331,3 @@ zip文件
     }
   }
   ```
-
-  
