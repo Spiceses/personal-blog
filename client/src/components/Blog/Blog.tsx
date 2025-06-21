@@ -1,12 +1,6 @@
 import { useState, useEffect, JSX } from "react";
 import { getPosts, PostListItem } from "@api/posts.ts";
-import {
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  CardActionArea,
-} from "@mui/material";
+import { Grid, Card, CardContent, Typography, CardActionArea } from "@mui/material";
 import { Link } from "react-router-dom";
 
 const Blog = (): JSX.Element => {
@@ -21,14 +15,11 @@ const Blog = (): JSX.Element => {
   }, []);
 
   return (
-    <Grid container>
+    <Grid container direction="column" spacing={2}>
       {posts.map((post: PostListItem) => {
         return (
           <Grid key={post.slug}>
-            <Link
-              to={`/blog/${post.slug}`}
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
+            <Link to={`/blog/${post.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
               <Card>
                 <CardActionArea sx={{ height: "100%" }}>
                   <CardContent>

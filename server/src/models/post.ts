@@ -1,3 +1,5 @@
+// src/models/post.ts
+
 import mongoose, { Schema, Document } from "mongoose";
 
 import slugify from "slugify";
