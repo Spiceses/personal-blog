@@ -2,12 +2,16 @@
 
 import express from "express";
 import postRoutes from "./api/posts.routes.js"; // 引入路由
+import cors from "cors";
 
 // 创建 Express 应用实例
 const app = express();
 
 // --- 中间件 ---
 app.use(express.json()); // 用于解析 JSON 请求体
+
+// 允许所有来源的跨域请求
+app.use(cors());
 
 // --- 路由定义 ---
 app.get("/", (req, res) => {

@@ -3,7 +3,6 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import app from "./app.js";
-import cors from "cors";
 
 // 加载 .env 文件中的环境变量
 dotenv.config();
@@ -14,9 +13,6 @@ if (!MONGODB_URI) {
   console.error("错误：未在 .env 文件中定义 MONGODB_URI");
   process.exit(1); // 如果没有定义URI，则退出程序
 }
-
-// 允许所有来源的跨域请求
-app.use(cors());
 
 // 定义一个异步函数来连接数据库
 const connectDB = async () => {
