@@ -1,6 +1,6 @@
 // src/services/post.service.ts
 
-import Post, { IPost } from "../models/post.js";
+import Post, { IPost } from "../models/Post.js";
 import AdmZip from "adm-zip";
 import matter from "gray-matter";
 import { ossService } from "./oss.service.js";

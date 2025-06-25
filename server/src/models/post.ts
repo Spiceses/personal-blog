@@ -1,4 +1,4 @@
-// src/models/post.ts
+// src/models/Post.ts
 
 import mongoose, { Schema, Document } from "mongoose";
 
