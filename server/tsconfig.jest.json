@@ -1,0 +1,11 @@
+// tsconfig.jest.json
+{
+  // 关键：继承基础配置
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // 关键：为测试环境添加 jest 的类型
+    "types": ["jest", "node"]
+  },
+  // 关键：告诉 TS 编译器，测试文件也属于这个 "项目"
+  "include": ["src/**/*.ts", "tests/**/*.ts"]
+}
