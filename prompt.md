@@ -205,7 +205,7 @@ my-react-ts-app/
 
 错误响应
 
-- `404 Not Found`: 如果具有给定 `id` 或 `slug` 的文章不存在。
+- `404 Not Found`: 如果具有给定 `slug` 的文章不存在。
 
   ```json
   {

@@ -5,7 +5,7 @@ import Post from "../../src/models/Post"; // 直接导入真实的 Mongoose 模�
 import * as dbHandler from "../db-handler"; // 导入我们的数据库辅助模块
 
 // 描述 PostService 的测试套件
-describe("PostService - Integration Tests", () => {
+describe("PostService Tests", () => {
   // 在所有测试开始前，连接到内存数据库
   beforeAll(async () => await dbHandler.connect());
 
@@ -34,6 +34,8 @@ describe("PostService - Integration Tests", () => {
       // 3. 断言 (Assert)
       // 确认返回了正确数量的文章
       expect(posts).toHaveLength(2);
+      // 对返回的文章进行排序，以便进行确定性断言
+      posts.sort((a, b) => (a.title as string).localeCompare(b.title as string));
       // 确认返回的数据包含了我们期望的字段和值
       expect(posts[0].title).toBe("title 1");
       expect(posts[0].slug).toBe("title-1"); // 验证 slug 是否自动生成
@@ -54,6 +56,25 @@ describe("PostService - Integration Tests", () => {
     });
   });
 
-  // 你可以在这里添加对其他服务方法的测试，例如 create, getById 等
-  // describe("createPost", () => { ... });
+  describe("getPostBySlug", () => {
+    test("当存在匹配的 slug 时，应该返回正确的文章", async () => {
+      // 1. 准备 (Arrange)
+      const postData = { title: "Test Post", markdownContent: "This is some content." };
+      const createdPost = await Post.create(postData);
+
+      // 2. 执行 (Act)
+      const foundPost = await postService.getPostBySlug(createdPost.slug);
+
+      // 3. 断言 (Assert)
+      expect(foundPost).not.toBeNull();
+      expect(foundPost?.title).toBe(postData.title);
+      expect(foundPost?.slug).toBe(createdPost.slug);
+      expect(foundPost?.markdownContent).toBe(postData.markdownContent);
+    });
+
+    test("当不存在匹配的 slug 时，应该返回 null", async () => {
+      const foundPost = await postService.getPostBySlug("non-existent-slug");
+      expect(foundPost).toBeNull();
+    });
+  });
 });
