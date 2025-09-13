@@ -286,3 +286,7 @@ JSON
       }
     }
     ```
+
+
+
+###### POST /api/auth/logout
