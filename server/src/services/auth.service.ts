@@ -2,7 +2,7 @@
 
 import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
-import User, { IUser } from "../models/User.js";
+import User, { IUserDocument } from "../models/User.js";
 
 // 强烈建议将这些值存储在环境变量中
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID";
@@ -24,7 +24,7 @@ class AuthService {
    * @param token - 从 Google 登录获取的 credential token
    * @returns - 数据库中的用户信息
    */
-  public async verifyGoogleTokenAndFindOrCreateUser(token: string): Promise<IUser> {
+  public async verifyGoogleTokenAndFindOrCreateUser(token: string): Promise<IUserDocument> {
     try {
       const ticket = await client.verifyIdToken({
         idToken: token,
