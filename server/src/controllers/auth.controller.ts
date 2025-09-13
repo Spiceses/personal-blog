@@ -2,6 +2,7 @@
 
 import { Request, Response, NextFunction } from "express";
 import { authService } from "../services/auth.service.js";
+import { IUserDocument } from "../models/User.js";
 
 const asyncHandler = (fn: Function) => (req: Request, res: Response, next: NextFunction) => {
   Promise.resolve(fn(req, res, next)).catch(next);
@@ -9,21 +10,24 @@ const asyncHandler = (fn: Function) => (req: Request, res: Response, next: NextF
 
 class AuthController {
   public googleLogin = asyncHandler(async (req: Request, res: Response) => {
+    // 获取 google 的一次性凭证
     const { token } = req.body;
     if (!token) {
       return res.status(400).json({ success: false, error: { message: "缺少 Google token。" } });
     }
 
     try {
+      // 验证 google 的一次性凭证, 如果验证成功, 则获取用户信息(如果用户不存在则创建用户).
       const user = await authService.verifyGoogleTokenAndFindOrCreateUser(token);
-      const sessionToken = authService.generateJwtToken(user._id);
+      // 使用用户的 id 生成 sessionToken, 这个 token 用于用户的浏览器向服务器展示 Who am I?
+      const sessionToken = authService.generateJwtToken(user.id);
 
       res.cookie("session-token", sessionToken, {
         httpOnly: true, // 防止客户端 JS 读取 cookie
         secure: process.env.NODE_ENV === "production", // 在生产环境中只通过 HTTPS 发送
         sameSite: "strict", // 防止 CSRF
         path: "/",
-        // maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+        maxAge: 1000 * 60 * 60 * 24, // 设置为 1 天
       });
 
       res.status(200).json({
