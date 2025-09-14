@@ -61,6 +61,18 @@ class AuthController {
       },
     });
   });
+
+  public logout = asyncHandler(async (req: Request, res: Response) => {
+    res.cookie("session-token", "", {
+      httpOnly: true,
+      expires: new Date(0), // Set expiration to a past date
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+    });
+
+    res.status(200).json({ success: true, data: {} });
+  });
 }
 
 export const authController = new AuthController();

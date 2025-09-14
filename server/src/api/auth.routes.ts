@@ -15,4 +15,8 @@ router.post("/google-login", authController.googleLogin);
 // @access Private
 router.get("/me", protect, authController.getMe);
 
+// @desc   用户登出
+// @route  POST /api/auth/logout
+router.post("/logout", authController.logout);
+
 export default router;
