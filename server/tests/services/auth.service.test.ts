@@ -11,13 +11,10 @@ import * as dbHandler from "../db-handler"; // 导入数据库辅助模块
 // 模拟 google-auth-library 模块
 // 我们不希望在测试中进行真实的网络调用
 const mockVerifyIdToken = jest.fn<() => Promise<LoginTicket>>();
-console.log("!!! Preparing to mock google-auth-library !!!");
 jest.mock("google-auth-library", () => {
-  console.log("!!! MOCKING google-auth-library is executing !!!");
   return {
     // 模拟 OAuth2Client 类
     OAuth2Client: jest.fn().mockImplementation(() => {
-      console.log("!!! MOCKED new OAuth2Client() was called !!!");
       return {
         // 模拟 verifyIdToken 方法，使其返回我们预设的值
         verifyIdToken: mockVerifyIdToken,
