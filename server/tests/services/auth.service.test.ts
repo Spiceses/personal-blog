@@ -1,9 +1,9 @@
 // tests/services/auth.service.test.ts
 
 import { describe, test, expect, beforeAll, afterAll, afterEach, jest } from "@jest/globals";
-import { OAuth2Client, LoginTicket } from "google-auth-library";
+import { LoginTicket } from "google-auth-library";
 import mongoose from "mongoose";
-import { authService } from "../../src/services/auth.service";
+// 删除了这里的静态导入: import { authService } from "../../src/services/auth.service";
 import User from "../../src/models/User"; // 直接导入真实的 Mongoose 模型
 import * as dbHandler from "../db-handler"; // 导入数据库辅助模块
 
@@ -29,8 +29,19 @@ jest.mock("google-auth-library", () => {
 
 // 描述 AuthService 的测试套件
 describe("AuthService Tests", () => {
-  // 在所有测试开始前，连接到内存数据库
-  beforeAll(async () => await dbHandler.connect());
+  // 定义一个变量来持有动态导入的服务实例
+  // 为了类型安全，我们可以使用 typeof 和 ReturnType 结合的方式，或者直接用 any
+  let authService: typeof import("../../src/services/auth.service").authService;
+
+  // 在所有测试开始前，连接到内存数据库并动态导入服务
+  beforeAll(async () => {
+    // 动态导入 auth.service 模块
+    // 这会确保在导入它之前，上面的 jest.mock 已经执行
+    const authModule = await import("../../src/services/auth.service");
+    authService = authModule.authService;
+
+    await dbHandler.connect();
+  });
 
   // 在每个测试结束后，清空数据库并重置所有模拟
   afterEach(async () => {
@@ -63,13 +74,7 @@ describe("AuthService Tests", () => {
       // 设置 mock 函数，模拟 Google 返回有效的用户信息
       mockVerifyIdToken.mockResolvedValue({
         getPayload: () => googlePayload,
-        getUserId: () => null,
-        getEnvelope: () => undefined,
-        getAttributes: () => ({
-          envelope: undefined,
-          payload: undefined,
-        }),
-      });
+      } as LoginTicket); // 使用类型断言来简化 mock 对象的创建
 
       // 2. 执行 (Act)
       const user = await authService.verifyGoogleTokenAndFindOrCreateUser(googleToken);
@@ -107,13 +112,7 @@ describe("AuthService Tests", () => {
       };
       mockVerifyIdToken.mockResolvedValue({
         getPayload: () => updatedGooglePayload,
-        getUserId: () => null,
-        getEnvelope: () => undefined,
-        getAttributes: () => ({
-          envelope: undefined,
-          payload: undefined,
-        }),
-      });
+      } as LoginTicket);
 
       // 2. 执行 (Act)
       const user = await authService.verifyGoogleTokenAndFindOrCreateUser(googleToken);
@@ -131,16 +130,10 @@ describe("AuthService Tests", () => {
 
     test("当 Google token 无效时，应该抛出错误", async () => {
       // 1. 准备 (Arrange)
-      // 模拟 Google 验证失败，getPayload 返回 null
+      // 模拟 Google 验证失败，getPayload 返回 undefined
       mockVerifyIdToken.mockResolvedValue({
         getPayload: () => undefined,
-        getUserId: () => null,
-        getEnvelope: () => undefined,
-        getAttributes: () => ({
-          envelope: undefined,
-          payload: undefined,
-        }),
-      });
+      } as LoginTicket);
 
       // 2. 执行 & 3. 断言 (Act & Assert)
       // 确认调用该方法会抛出指定的错误
