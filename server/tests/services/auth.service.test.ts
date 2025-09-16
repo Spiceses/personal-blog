@@ -3,40 +3,37 @@
 import { describe, test, expect, beforeAll, afterAll, afterEach, jest } from "@jest/globals";
 import { LoginTicket } from "google-auth-library";
 import mongoose from "mongoose";
-// 删除了这里的静态导入: import { authService } from "../../src/services/auth.service";
-import User from "../../src/models/User"; // 直接导入真实的 Mongoose 模型
-import * as dbHandler from "../db-handler"; // 导入数据库辅助模块
+import User from "../../src/models/User";
+import * as dbHandler from "../db-handler";
 
-// #region Mocks
-// 模拟 google-auth-library 模块
-// 我们不希望在测试中进行真实的网络调用
-const mockVerifyIdToken = jest.fn<() => Promise<LoginTicket>>();
-jest.mock("google-auth-library", () => {
-  return {
-    // 模拟 OAuth2Client 类
-    OAuth2Client: jest.fn().mockImplementation(() => {
-      return {
-        // 模拟 verifyIdToken 方法，使其返回我们预设的值
-        verifyIdToken: mockVerifyIdToken,
-      };
-    }),
-  };
-});
-// #endregion
+// 关键改动：我们完全移除了文件顶部的 jest.mock("google-auth-library", ...)
 
-// 描述 AuthService 的测试套件
 describe("AuthService Tests", () => {
   // 定义一个变量来持有动态导入的服务实例
-  // 为了类型安全，我们可以使用 typeof 和 ReturnType 结合的方式，或者直接用 any
   let authService: typeof import("../../src/services/auth.service").authService;
+  // 定义一个变量来持有我们模拟的函数，以便在测试用例中控制它
+  let mockVerifyIdToken: jest.Mock<(token: string) => Promise<LoginTicket>>;
 
-  // 在所有测试开始前，连接到内存数据库并动态导入服务
+  // 在所有测试开始前，设置模拟、动态导入模块并连接到数据库
   beforeAll(async () => {
-    // 动态导入 auth.service 模块
-    // 这会确保在导入它之前，上面的 jest.mock 已经执行
+    // 创建 mock 函数的实例
+    mockVerifyIdToken = jest.fn<() => Promise<LoginTicket>>();
+
+    // 关键改动：使用 jest.unstable_mockModule 在运行时精确控制模拟
+    jest.unstable_mockModule("google-auth-library", () => ({
+      // 模拟 OAuth2Client 类
+      OAuth2Client: jest.fn().mockImplementation(() => ({
+        // 模拟 verifyIdToken 方法，使其返回我们上面创建的 mock 函数实例
+        verifyIdToken: mockVerifyIdToken,
+      })),
+    }));
+
+    // 在注册完 mock 之后，我们再动态导入 auth.service 模块。
+    // 这确保了它在加载时会获取到上面定义的 mock 版本的 "google-auth-library"。
     const authModule = await import("../../src/services/auth.service");
     authService = authModule.authService;
 
+    // 连接到内存数据库
     await dbHandler.connect();
   });
 
@@ -49,6 +46,8 @@ describe("AuthService Tests", () => {
   // 在所有测试结束后，关闭数据库连接
   afterAll(async () => await dbHandler.closeDatabase());
 
+  // --- 所有测试用例保持不变，它们现在应该可以正常工作了 ---
+
   /**
    * 测试 verifyGoogleTokenAndFindOrCreateUser 方法
    */
@@ -59,33 +58,28 @@ describe("AuthService Tests", () => {
       name: "Test User",
       email: "test.user@example.com",
       picture: "https://example.com/avatar.jpg",
-
-      iss: "https://accounts.google.com", // Issuer (签发者)
-      aud: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com", // Audience (受众)
-      iat: Math.floor(Date.now() / 1000), // Issued At (签发时间戳, 秒)
-      exp: Math.floor(Date.now() / 1000) + 3600, // Expiration Time (过期时间戳, 秒)
+      iss: "https://accounts.google.com",
+      aud: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + 3600,
     };
 
     test("当一个新用户通过 Google 登录时，应该在数据库中创建该用户", async () => {
       // 1. 准备 (Arrange)
-      // 设置 mock 函数，模拟 Google 返回有效的用户信息
       mockVerifyIdToken.mockResolvedValue({
         getPayload: () => googlePayload,
-      } as LoginTicket); // 使用类型断言来简化 mock 对象的创建
+      } as LoginTicket);
 
       // 2. 执行 (Act)
       const user = await authService.verifyGoogleTokenAndFindOrCreateUser(googleToken);
 
       // 3. 断言 (Assert)
-      // 确认 verifyIdToken 被正确调用
       expect(mockVerifyIdToken).toHaveBeenCalledTimes(1);
-      // 确认返回的用户信息与 Google payload 匹配
       expect(user).toBeDefined();
       expect(user.googleId).toBe(googlePayload.sub);
       expect(user.email).toBe(googlePayload.email);
       expect(user.name).toBe(googlePayload.name);
 
-      // 确认数据库中确实创建了该用户
       const dbUser = await User.findById(user._id);
       expect(dbUser).not.toBeNull();
       expect(dbUser?.email).toBe(googlePayload.email);
@@ -93,7 +87,6 @@ describe("AuthService Tests", () => {
 
     test("当一个已存在的用户通过 Google 登录时，应该返回该用户信息并更新", async () => {
       // 1. 准备 (Arrange)
-      // 先在数据库中创建一个老用户
       await User.create({
         googleId: googlePayload.sub,
         email: googlePayload.email,
@@ -101,7 +94,6 @@ describe("AuthService Tests", () => {
         picture: "https://example.com/old-avatar.jpg",
       });
 
-      // 模拟 Google 返回更新后的用户信息 (例如，用户改了名字)
       const updatedGooglePayload = {
         ...googlePayload,
         name: "Updated Name",
@@ -116,24 +108,19 @@ describe("AuthService Tests", () => {
       const userCount = await User.countDocuments();
 
       // 3. 断言 (Assert)
-      // 确认没有创建新用户
       expect(userCount).toBe(1);
-      // 确认用户的姓名和头像已被更新
       expect(user.name).toBe(updatedGooglePayload.name);
       expect(user.picture).toBe(updatedGooglePayload.picture);
-      // 确认 googleId 和 email 这种不应改变的字段没有改变
       expect(user.googleId).toBe(googlePayload.sub);
     });
 
     test("当 Google token 无效时，应该抛出错误", async () => {
       // 1. 准备 (Arrange)
-      // 模拟 Google 验证失败，getPayload 返回 undefined
       mockVerifyIdToken.mockResolvedValue({
         getPayload: () => undefined,
       } as LoginTicket);
 
       // 2. 执行 & 3. 断言 (Act & Assert)
-      // 确认调用该方法会抛出指定的错误
       await expect(authService.verifyGoogleTokenAndFindOrCreateUser(googleToken)).rejects.toThrow("无效的凭证。");
     });
   });
@@ -155,7 +142,6 @@ describe("AuthService Tests", () => {
       expect(typeof token).toBe("string");
       expect(decodedPayload).not.toBeNull();
       expect(decodedPayload.id).toBe(userId);
-      // 检查 payload 是否包含iat(issued at)和exp(expiration)字段
       expect(decodedPayload.iat).toBeDefined();
       expect(decodedPayload.exp).toBeDefined();
     });
