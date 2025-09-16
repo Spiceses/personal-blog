@@ -290,3 +290,44 @@ JSON
 
 
 ###### POST /api/auth/logout
+
+登出用户。此操作会使服务器端的会话失效，并清除浏览器中的 `session-token` Cookie。
+
+**请求体 (Request Body)**
+
+无
+
+**响应 (Responses)**
+
+- **`200 OK`** - 登出成功
+
+  - **响应头 (Response Headers):**
+
+    ```
+    Set-Cookie: session-token=; HttpOnly; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+    ```
+
+  - **响应体 (Response Body):**
+
+    JSON
+
+    ```
+    {
+      "success": true,
+      "message": "登出成功。"
+    }
+    ```
+
+- **`500 Internal Server Error`** - 服务器内部错误
+
+  JSON
+
+  ```
+  {
+    "success": false,
+    "error": {
+      "message": "服务器发生了一个意外错误。"
+    }
+  }
+  ```
+

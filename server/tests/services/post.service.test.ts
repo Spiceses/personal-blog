@@ -1,4 +1,5 @@
-// tests/unit/services/post.service.test.ts
+// testsservices/post.service.test.ts
+
 import { describe, test, expect, beforeAll, afterAll, afterEach } from "@jest/globals";
 import { postService } from "../../src/services/post.service";
 import Post from "../../src/models/Post"; // 直接导入真实的 Mongoose 模型
