@@ -17,7 +17,7 @@ describe("AuthService Tests", () => {
   // 在所有测试开始前，设置模拟、动态导入模块并连接到数据库
   beforeAll(async () => {
     // 创建 mock 函数的实例
-    mockVerifyIdToken = jest.fn<() => Promise<LoginTicket>>();
+    mockVerifyIdToken = jest.fn();
 
     // 关键改动：使用 jest.unstable_mockModule 在运行时精确控制模拟
     jest.unstable_mockModule("google-auth-library", () => ({

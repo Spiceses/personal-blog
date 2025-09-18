@@ -4,8 +4,6 @@ import { describe, test, expect, jest, afterEach, beforeAll } from "@jest/global
 import request from "supertest";
 import type { Express } from "express";
 
-// 关键改动：我们完全移除了文件顶部的 jest.mock(...)
-
 describe("PostsController Tests", () => {
   let app: Express;
   let mockedPostService: jest.Mocked<typeof import("../../src/services/post.service.js").postService>;
@@ -50,6 +48,9 @@ describe("PostsController Tests", () => {
     });
 
     test("当 service 抛出错误时，应该返回 500 Internal Server Error", async () => {
+      // 在这个测试用例执行前，暂时“静音”console.error
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
       // 1. 准备 (Arrange)
       const errorMessage = "数据库连接失败";
       mockedPostService.getAllPosts.mockRejectedValue(new Error(errorMessage));
@@ -60,6 +61,9 @@ describe("PostsController Tests", () => {
       expect(response.status).toBe(500);
       expect(response.body.success).toBe(false);
       expect(response.body.error.message).toBe(errorMessage);
+
+      // 测试结束后，恢复 console.error 的原始功能
+      consoleErrorSpy.mockRestore();
     });
   });
 
