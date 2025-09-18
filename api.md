@@ -164,7 +164,7 @@ zip 文件
 
 状态码:
 
-- 400 Bad Request 如果请求数据不符合要求（例如，压缩包不包含 md 文件或者存在多个 md 文件, 或者md文件不包含yaml头 ）。
+- 400 Bad Request 如果请求数据不符合要求（例如，压缩包不包含 md 文件或者存在多个 md 文件, 或者 md 文件不包含 yaml 头 ）。
 
   ```json
   {
@@ -186,9 +186,7 @@ zip 文件
   }
   ```
 
-
-
-###### POST /api/auth/google-login
+###### POST /api/auth/google/login
 
 **请求体 (Request Body)**:
 
@@ -242,8 +240,6 @@ JSON
 
 - **500 Internal Server Error**: 服务器内部错误（如数据库问题）。
 
-
-
 ###### GET /api/auth/me
 
 这个接口用于前端应用加载时，检查用户是否已经处于登录状态。
@@ -287,8 +283,6 @@ JSON
     }
     ```
 
-
-
 ###### POST /api/auth/logout
 
 登出用户。此操作会使服务器端的会话失效，并清除浏览器中的 `session-token` Cookie。
@@ -330,4 +324,3 @@ JSON
     }
   }
   ```
-
