@@ -54,7 +54,7 @@ const UserSchema = new Schema(
   {
     timestamps: true,
     toJSON: {
-      transform(doc, ret) {
+      transform(doc, ret: Record<string, any>) {
         // 美化 toJSON 的输出，将 _id 转换为 id，并移除 __v
         ret.id = ret._id;
         delete ret._id;

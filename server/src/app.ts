@@ -1,7 +1,8 @@
 // src/app.ts
 
 import express from "express";
-import postRoutes from "./api/posts.routes.js"; // 引入路由
+import postsRouter from "../src/api/posts.routes.js";
+import authRouter from "../src/api/auth.routes.js";
 import cors from "cors";
 
 // 创建 Express 应用实例
@@ -13,13 +14,8 @@ app.use(express.json()); // 用于解析 JSON 请求体
 // 允许所有来源的跨域请求
 app.use(cors());
 
-// --- 路由定义 ---
-app.get("/", (req, res) => {
-  res.send("你好，服务器正在运行!");
-});
-
-// 挂载文章API路由
-app.use("/api/posts", postRoutes);
+app.use("/api/posts", postsRouter);
+app.use("/api/auth", authRouter);
 
 // 统一错误处理中间件 (保持不变)
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
