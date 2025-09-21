@@ -1,37 +1,24 @@
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
+// 从我们新建的 Context 文件中引入 useAuth
+import { useAuth } from "@contexts/AuthContext.tsx";
 
-// 这是一个模拟的身份验证 hook。
-// 在您的实际应用中，您应该替换这里的逻辑，
-// 以便它能真实地检查用户的登录状态（例如，通过检查 Context, Redux store, localStorage 或 cookie）。
-const useAuth = () => {
-  // 假设我们从某个地方获取用户信息
-  const user = null; // 将此更改为对象（例如 { name: "John" }）以模拟登录状态
-
-  if (user) {
-    return { isLoggedIn: true };
-  } else {
-    return { isLoggedIn: false };
-  }
-};
-
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-}
-
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isLoggedIn } = useAuth();
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, isLoading } = useAuth();
   const location = useLocation();
 
-  if (!isLoggedIn) {
-    // 如果用户未登录，则重定向到登录页面。
-    // 我们还传递了用户最初想访问的页面路径（`location.pathname`）
-    // 这样在登录成功后，可以将他们重定向回来。
-    // `replace` 属性会替换掉历史记录中的当前条目，防止用户通过“后退”按钮回到这个受保护的路由。
-    return <Navigate to="/login" replace state={{ from: location }} />;
+  // 当正在检查认证状态时，显示加载中...
+  if (isLoading) {
+    return <div>Loading...</div>; // 或者一个更复杂的加载动画组件
   }
 
-  // 如果用户已登录，则正常渲染子组件。
+  // 检查完毕后，如果用户不存在，则重定向到登录页
+  if (!user) {
+    // 将用户原本想访问的页面路径记录下来，登录后可以跳回
+    return <Navigate to="/login" replace state={{ from: location }} />; //
+  }
+
+  // 如果用户存在，则渲染子组件
   return <>{children}</>;
 };
 

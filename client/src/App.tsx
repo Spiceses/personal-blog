@@ -5,15 +5,16 @@ import HomePage from "@pages/HomePage.tsx";
 import PostPage from "@pages/PostPage.tsx";
 import AboutPage from "@pages/AboutPage.tsx";
 import NotFoundPage from "@pages/NotFoundPage.tsx";
-
-import Navbar from "@components/Navbar/Navbar.tsx";
-import ProtectedRoute from "@components/ProtectedRoute/ProtectedRoute.tsx";
 import ProfilePage from "@pages/ProfilePage.tsx";
 import LoginPage from "@pages/LoginPage.tsx";
 
+import Navbar from "@components/Navbar/Navbar.tsx";
+import ProtectedRoute from "@components/ProtectedRoute/ProtectedRoute.tsx";
+import { AuthProvider } from "@contexts/AuthContext.tsx";
+
 const App = () => {
   return (
-    <>
+    <AuthProvider>
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -31,7 +32,7 @@ const App = () => {
         />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </>
+    </AuthProvider>
   );
 };
 

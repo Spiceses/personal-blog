@@ -15,6 +15,7 @@
       "@api/*": ["api/*"], // 将 @api/xxx 映射到 src/api/xxx
       "@pages/*": ["pages/*"], // 将 @api/xxx 映射到 src/api/xxx
       "@components/*": ["components/*"], // 将 @api/xxx 映射到 src/api/xxx
+      "@contexts/*": ["contexts/*"],
     }
   }
 }

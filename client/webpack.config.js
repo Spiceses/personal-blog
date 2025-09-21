@@ -21,6 +21,7 @@ export default {
       "@api": path.resolve(__dirname, "src/api"),
       "@components": path.resolve(__dirname, "src/components"),
       "@pages": path.resolve(__dirname, "src/pages"),
+      "@contexts": path.resolve(__dirname, "src/contexts"),
     },
     fallback: {
       buffer: path.resolve(__dirname, "node_modules/buffer/index.js"),
