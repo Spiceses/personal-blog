@@ -5,7 +5,7 @@ import { authService } from "../services/auth.service.js";
 import User from "../models/User.js";
 
 export const protect = async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.cookies["session-token"];
+  const token = req.cookies?.["session-token"];
 
   if (!token) {
     res.status(401).json({ success: false, error: { message: "请先登录。" } });

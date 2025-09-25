@@ -28,7 +28,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const checkUserStatus = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/auth/me"); //
+      const response = await fetch("/api/auth/me");
       if (response.ok) {
         const data = await response.json();
         setUser(data.data.user); //
